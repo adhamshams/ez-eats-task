@@ -4,24 +4,35 @@ import { useState } from 'react';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import orders from '../../assets/data/orders.json';
 import { router } from 'expo-router';
+import { useLanguage } from '../../contexts/languageContext';
 
-// Define types
+interface Extra {
+  name: string;
+  price: number;
+}
+
+interface OrderItem {
+  name: string;
+  quantity: number;
+  price: number;
+  extras?: Extra[];
+  notes?: string;
+}
+
+interface Customer {
+    name: string;
+    phone: string;
+    email: string;
+    address?: string;
+}
+
 interface Order {
   id: string;
   status: string;
   type: 'pickup' | 'delivery' | 'dine-in';
   price: number;
-  items: {
-    name: string;
-    quantity: number;
-    price: number;
-  }[];
-  customer: {
-    name: string;
-    phone: string;
-    email: string;
-    address?: string;
-  };
+  items: OrderItem[];
+  customer: Customer;
   orderTime: string;
   table?: string;
 }
@@ -32,10 +43,11 @@ interface Route {
 }
 
 export default function HomeScreen() {
+  const { t, isRTL } = useLanguage();
   const [index, setIndex] = useState(0);
   const [routes] = useState<Route[]>([
-    { key: 'home', title: 'Home' },
-    { key: 'ready', title: 'Ready' },
+    { key: 'home', title: t('home') },
+    { key: 'ready', title: t('ready') },
   ]);
 
   const renderScene = ({ route }: { route: Route }) => {
@@ -51,14 +63,14 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-      <View style={styles.header}>
-        <View style={styles.logoContainer}>
+      <View style={[styles.header, isRTL && styles.headerRTL]}>
+        <View style={[styles.logoContainer, isRTL && styles.logoContainerRTL]}>
           <View style={styles.logo}>
             <Text style={{ color: 'white', fontWeight: 'bold' }}>EZ</Text>
           </View>
           <View style={styles.restaurantInfo}>
-            <Text style={styles.restaurantName}>Restaurant Name</Text>
-            <Text style={styles.restaurantHours}>8:00 - 16:00</Text>
+            <Text style={[styles.restaurantName, isRTL && styles.textRTL]}>{t('restaurantName')}</Text>
+            <Text style={[styles.restaurantHours, isRTL && styles.textRTL]}>{t('restaurantHours')}</Text>
           </View>
         </View>
         <View style={styles.brandLogo}>
@@ -97,6 +109,7 @@ function OrdersList({ orders }: { orders: Order[] }) {
 }
 
 function OrderCard({ order }: { order: Order }) {
+  const { t, isRTL } = useLanguage();
   const getIcon = (type: string) => {
     switch (type) {
       case 'pickup':
@@ -113,11 +126,11 @@ function OrderCard({ order }: { order: Order }) {
   const getTypeLabel = (type: string, order: Order) => {
     switch (type) {
       case 'pickup':
-        return 'Pickup';
+        return t('pickup');
       case 'delivery':
-        return 'Delivery';
+        return t('delivery');
       case 'dine-in':
-        return order.table || 'Table';
+        return order.table || t('table');
       default:
         return '';
     }
@@ -125,22 +138,22 @@ function OrderCard({ order }: { order: Order }) {
 
   return (
     <TouchableOpacity style={styles.card} onPress={() => router.push(`/order/${order.id}`)}>
-      <View style={styles.cardHeader}>
-        <Text style={styles.waiterName}>Waiter Name</Text>
-        <Text style={styles.orderId}>{order.id}</Text>
+      <View style={[styles.cardHeader, isRTL && styles.cardHeaderRTL]}>
+        <Text style={[styles.waiterName, isRTL && styles.textRTL]}>{t('waiterName')}</Text>
+        <Text style={[styles.orderId, isRTL && styles.textRTL]}>{order.id}</Text>
       </View>
-      <View style={styles.cardTimeRow}>
-        <View style={styles.timeContainer}>
+      <View style={[styles.cardTimeRow, isRTL && styles.cardTimeRowRTL]}>
+        <View style={[styles.timeContainer, isRTL && styles.timeContainerRTL]}>
           <Ionicons name="time-outline" size={16} color="gray" />
-          <Text style={styles.timeText}>{order.orderTime}</Text>
+          <Text style={[styles.timeText, isRTL && styles.textRTL]}>{order.orderTime}</Text>
         </View>
-        <View style={styles.typeContainer}>
+        <View style={[styles.typeContainer, isRTL && styles.typeContainerRTL]}>
           {getIcon(order.type)}
-          <Text style={styles.typeText}>{getTypeLabel(order.type, order)}</Text>
+          <Text style={[styles.typeText, isRTL && styles.textRTL]}>{getTypeLabel(order.type, order)}</Text>
         </View>
       </View>
       
-      <View style={styles.cardActions}>
+      <View style={[styles.cardActions, isRTL && styles.cardActionsRTL]}>
         <TouchableOpacity 
           style={[
             styles.actionButton, 
@@ -149,7 +162,7 @@ function OrderCard({ order }: { order: Order }) {
           disabled={order.status === 'completed'}
         >
           <Ionicons name="chatbubble-outline" size={16} color={order.status === 'completed' ? "gray" : "white"} />
-          <Text style={[styles.buttonText, { color: order.status === 'completed' ? "gray" : "white" }]}>Send SMS</Text>
+          <Text style={[styles.buttonText, { color: order.status === 'completed' ? "gray" : "white" }, isRTL && styles.textRTL]}>{t('sendSMS')}</Text>
         </TouchableOpacity>
         
         <TouchableOpacity 
@@ -159,7 +172,7 @@ function OrderCard({ order }: { order: Order }) {
           ]}
         >
           <Ionicons name="checkmark-circle-outline" size={16} color={order.status === 'completed' ? "white" : "gray"} />
-          <Text style={[styles.buttonText, { color: order.status === 'completed' ? "white" : "gray" }]}>Picked Up</Text>
+          <Text style={[styles.buttonText, { color: order.status === 'completed' ? "white" : "gray" }, isRTL && styles.textRTL]}>{t('pickedUp')}</Text>
         </TouchableOpacity>
       </View>
     </TouchableOpacity>
@@ -182,6 +195,7 @@ const styles = StyleSheet.create({
   logoContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 15
   },
   logo: {
     width: 32,
@@ -189,8 +203,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: '#E74C3C',
     justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
+    alignItems: 'center'
   },
   restaurantInfo: {
     flexDirection: 'column',
@@ -243,23 +256,24 @@ const styles = StyleSheet.create({
   timeContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 4,
   },
   timeText: {
-    marginLeft: 4,
     fontSize: 14,
     color: 'gray',
   },
   typeContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 4,
   },
   typeText: {
-    marginLeft: 4,
     fontSize: 14,
   },
   cardActions: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    gap: 5
   },
   actionButton: {
     flexDirection: 'row',
@@ -268,8 +282,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 6,
-    flex: 1,
-    marginHorizontal: 4,
+    flex: 1
   },
   sendSmsButton: {
     backgroundColor: '#283593',
@@ -285,4 +298,29 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: 'white',
   },
+  // RTL Styles
+  headerRTL: {
+    flexDirection: 'row-reverse',
+  },
+  textRTL: {
+    textAlign: 'right',
+  },
+  cardHeaderRTL: {
+    flexDirection: 'row-reverse',
+  },
+  cardTimeRowRTL: {
+    flexDirection: 'row-reverse',
+  },
+  timeContainerRTL: {
+    flexDirection: 'row-reverse',
+  },
+  typeContainerRTL: {
+    flexDirection: 'row-reverse',
+  },
+  cardActionsRTL: {
+    flexDirection: 'row-reverse',
+  },
+  logoContainerRTL: {
+    flexDirection: 'row-reverse',
+  }
 });

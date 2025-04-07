@@ -3,12 +3,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, router } from 'expo-router';
 import orders from '../../assets/data/orders.json';
 import { useState } from 'react';
+import { useLanguage } from '../../contexts/languageContext';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
     UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-// Define types
 interface Extra {
     name: string;
     price: number;
@@ -40,7 +40,7 @@ interface Order {
     table?: string;
 }
 
-const CollapsableView = ({ children, length }: { children: JSX.Element, length: number }) => {
+const CollapsableView = ({ children, length, title }: { children: JSX.Element, length: number, title: string }) => {
     const [isCollapsed, setIsCollapsed] = useState(false);
 
     const toggleCollapse = () => {
@@ -51,7 +51,7 @@ const CollapsableView = ({ children, length }: { children: JSX.Element, length: 
     return (
         <TouchableOpacity onPress={toggleCollapse} style={styles.statusCard}>
             <View style={styles.itemsHeader}>
-                <Text style={styles.sectionTitle}>Item Details ({length})</Text>
+                <Text style={styles.sectionTitle}>{title} ({length})</Text>
                 <Ionicons name={isCollapsed ? "chevron-down" : "chevron-up"} size={24} color="black" />
             </View>
             {!isCollapsed &&
@@ -66,6 +66,7 @@ export default function OrderDetailsScreen() {
     const [modalVisible, setModalVisible] = useState(false);
     const [managerCode, setManagerCode] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const { t, isRTL } = useLanguage();
 
     // Find the order with the matching ID
     const order = orders.find(o => o.id === id) as Order | undefined;
@@ -73,7 +74,7 @@ export default function OrderDetailsScreen() {
     if (!order) {
         return (
             <View style={styles.container}>
-                <Text>Order not found</Text>
+                <Text>{t('orderNotFound')}</Text>
             </View>
         );
     }
@@ -107,9 +108,9 @@ export default function OrderDetailsScreen() {
             if (managerCode === "1234") {
                 setModalVisible(false);
                 setManagerCode('');
-                Alert.alert("Success", "Refund has been approved and processed.");
+                Alert.alert(t('success'), t('refundApproved'));
             } else {
-                Alert.alert("Error", "Invalid manager code. Please try again.");
+                Alert.alert(t('error'), t('invalidManagerCode'));
                 setManagerCode('');
             }
         }, 800);
@@ -119,21 +120,21 @@ export default function OrderDetailsScreen() {
         <SafeAreaView style={styles.safeArea}>
             <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
                 {/* Header */}
-                <View style={styles.header}>
-                    <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-                        <Ionicons name="chevron-back" size={20} color="black" />
-                        <Text style={styles.headerTitle}>Order Details</Text>
+                <View style={[styles.header, isRTL && styles.headerRTL]}>
+                    <TouchableOpacity onPress={() => router.back()} style={[styles.backButton, isRTL && styles.backButtonRTL]}>
+                        <Ionicons name={isRTL ? "chevron-forward" : "chevron-back"} size={20} color="black" />
+                        <Text style={[styles.headerTitle, isRTL && styles.textRTL]}>{t('orderDetails')}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.refundButton} onPress={handleRefundPress}>
-                        <Text style={styles.refundButtonText}>Refund</Text>
+                        <Text style={styles.refundButtonText}>{t('refund')}</Text>
                     </TouchableOpacity>
                 </View>
 
                 {/* Client Info */}
-                <View style={styles.clientCard}>
+                <View style={[styles.clientCard, isRTL && styles.clientCardRTL]}>
                     <View>
-                        <Text style={styles.clientName}>{order.customer.name}</Text>
-                        <Text style={styles.orderId}>{order.id}</Text>
+                        <Text style={[styles.clientName, isRTL && styles.textRTL]}>{order.customer.name}</Text>
+                        <Text style={[styles.orderId, isRTL && styles.textRTL]}>{order.id}</Text>
                     </View>
                     <TouchableOpacity style={styles.callButton}>
                         <Ionicons name="call" size={24} color="white" />
@@ -142,52 +143,58 @@ export default function OrderDetailsScreen() {
 
                 {/* Order Status */}
                 <View style={styles.statusCard}>
-                    <Text style={styles.sectionTitle}>Order Status</Text>
+                    <Text style={[styles.sectionTitle, isRTL && styles.textRTL]}>{t('orderDetails')}</Text>
 
-                    <View style={styles.statusRow}>
+                    <View style={[styles.statusRow, isRTL && styles.statusRowRTL]}>
                         <Ionicons name="time-outline" size={20} color="gray" />
-                        <Text style={styles.statusLabel}>Ordered At</Text>
-                        <Text style={styles.statusValue}>{order.orderTime}</Text>
+                        <Text style={[styles.statusLabel, isRTL && styles.textRTL]}>{t('orderedAt')}</Text>
+                        <Text style={[styles.statusValue, isRTL && styles.textRTL]}>{order.orderTime}</Text>
                     </View>
 
-                    <View style={styles.statusRow}>
+                    <View style={[styles.statusRow, isRTL && styles.statusRowRTL]}>
                         <Ionicons name="bag-handle-outline" size={20} color="gray" />
-                        <Text style={styles.statusLabel}>Order Type</Text>
-                        <Text style={styles.statusValue}>{order.type.charAt(0).toUpperCase() + order.type.slice(1)}</Text>
+                        <Text style={[styles.statusLabel, isRTL && styles.textRTL]}>{t('orderType')}</Text>
+                        <Text style={[styles.statusValue, isRTL && styles.textRTL]}>{t(order.type)}</Text>
                     </View>
 
-                    <View style={styles.statusRow}>
+                    <View style={[styles.statusRow, isRTL && styles.statusRowRTL]}>
                         <Ionicons name="cash-outline" size={20} color="gray" />
-                        <Text style={styles.statusLabel}>Order Price</Text>
-                        <Text style={styles.statusValue}>{order.price}<Text style={styles.currencySuffix}> EGP</Text></Text>
+                        <Text style={[styles.statusLabel, isRTL && styles.textRTL]}>{t('orderPrice')}</Text>
+                        <Text style={[styles.statusValue, isRTL && styles.textRTL]}>
+                            {order.price}<Text style={styles.currencySuffix}> {t('currency')}</Text>
+                        </Text>
                     </View>
                 </View>
 
                 {/* Item Details */}
-                <CollapsableView length={order.items.length}>
+                <CollapsableView length={order.items.length} title={t('itemDetails')}>
                     <View style={styles.itemsList}>
                         {order.items.map((item, index) => (
                             <View key={index}>
-                                <View style={styles.itemContainer}>
+                                <View style={[styles.itemContainer, isRTL && styles.itemContainerRTL]}>
                                     <View style={styles.itemImage} />
                                     <View style={styles.itemDetails}>
-                                        <View style={styles.itemNameContainer}>
-                                            <Text style={styles.itemName}>{item.name} ({item.quantity})</Text>
-                                            <Text style={styles.itemPrice}>{item.price * item.quantity}<Text style={styles.currencySuffix}> EGP</Text></Text>
+                                        <View style={[styles.itemNameContainer, isRTL && styles.itemNameContainerRTL]}>
+                                            <Text style={[styles.itemName, isRTL && styles.textRTL]}>{item.name} ({item.quantity})</Text>
+                                            <Text style={[styles.itemPrice, isRTL && styles.textRTL]}>
+                                                {item.price * item.quantity}<Text style={styles.currencySuffix}> {t('currency')}</Text>
+                                            </Text>
                                         </View>
                                         {item.extras && item.extras.length > 0 ? 
-                                            <Text style={styles.extrasTitle}>Extras:</Text>
+                                            <Text style={[styles.extrasTitle, isRTL && styles.textRTL]}>{t('extras')}</Text>
                                             :
-                                            <Text style={styles.extrasTitle}>No Extras</Text>
+                                            <Text style={[styles.extrasTitle, isRTL && styles.textRTL]}>{t('noExtras')}</Text>
                                         }
                                         {item.extras && item.extras.map((extra: Extra, i: number) => (
-                                            <View key={i} style={styles.extraRow}>
-                                                <Text style={styles.extraName}>{extra.name}</Text>
-                                                <Text style={styles.extraPrice}>{extra.price}<Text style={styles.currencySuffix}> EGP</Text></Text>
+                                            <View key={i} style={[styles.extraRow, isRTL && styles.extraRowRTL]}>
+                                                <Text style={[styles.extraName, isRTL && styles.textRTL]}>{extra.name}</Text>
+                                                <Text style={[styles.extraPrice, isRTL && styles.textRTL]}>
+                                                    {extra.price}<Text style={styles.currencySuffix}> {t('currency')}</Text>
+                                                </Text>
                                             </View>
                                         ))}
                                         {item.notes && (
-                                            <Text style={styles.itemNotes}>{item.notes}</Text>
+                                            <Text style={[styles.itemNotes, isRTL && styles.textRTL]}>{item.notes}</Text>
                                         )}
                                     </View>
                                 </View>
@@ -209,8 +216,8 @@ export default function OrderDetailsScreen() {
             >
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContainer}>
-                        <View style={styles.modalHeader}>
-                            <Text style={styles.modalTitle}>Manager Authorization</Text>
+                        <View style={[styles.modalHeader, isRTL && styles.modalHeaderRTL]}>
+                            <Text style={[styles.modalTitle, isRTL && styles.textRTL]}>{t('managerAuthorization')}</Text>
                             <TouchableOpacity 
                                 onPress={() => {
                                     setModalVisible(false);
@@ -373,12 +380,12 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         marginTop: 16,
+        gap: 10
     },
     statusLabel: {
         flex: 1,
         fontSize: 16,
-        color: 'gray',
-        marginLeft: 10,
+        color: 'gray'
     },
     statusValue: {
         fontSize: 16,
@@ -395,13 +402,13 @@ const styles = StyleSheet.create({
     },
     itemContainer: {
         flexDirection: 'row',
-        paddingVertical: 16
+        paddingVertical: 16,
+        gap: 10
     },
     itemImage: {
         width: 60,
         height: 60,
         borderRadius: 8,
-        marginRight: 12,
         backgroundColor: '#f0f0f0',
     },
     itemDetails: {
@@ -466,7 +473,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     modalContainer: {
-        width: '95%',
+        width: '90%',
         backgroundColor: 'white',
         borderRadius: 12,
         padding: 15,
@@ -554,4 +561,32 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '600',
     },
+    // RTL styles
+    headerRTL: {
+        flexDirection: 'row-reverse',
+    },
+    textRTL: {
+        textAlign: 'right',
+    },
+    backButtonRTL: {
+        flexDirection: 'row-reverse',
+    },
+    clientCardRTL: {
+        flexDirection: 'row-reverse',
+    },
+    statusRowRTL: {
+        flexDirection: 'row-reverse',
+    },
+    itemContainerRTL: {
+        flexDirection: 'row-reverse',
+    },
+    itemNameContainerRTL: {
+        flexDirection: 'row-reverse',
+    },
+    extraRowRTL: {
+        flexDirection: 'row-reverse',
+    },
+    modalHeaderRTL: {
+        flexDirection: 'row-reverse',
+    }
 });
