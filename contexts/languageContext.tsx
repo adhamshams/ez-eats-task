@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const translations = {
   en: {
-    languageSelection: 'Language Selection',
+    language: 'Language',
     english: 'English',
     arabic: 'Arabic',
     currentLanguage: 'Current Language:',
@@ -35,10 +35,11 @@ export const translations = {
     cancel: 'Cancel',
     clear: 'Clear',
     validate: 'Validate',
-    currency: 'EGP'
+    currency: 'EGP',
+    saveChanges: 'Save Changes'
   },
   ar: {
-    languageSelection: 'اختيار اللغة',
+    language: 'اختيار اللغة',
     english: 'الإنجليزية',
     arabic: 'العربية',
     currentLanguage: 'اللغة الحالية:',
@@ -70,7 +71,8 @@ export const translations = {
     cancel: 'إلغاء',
     clear: 'مسح',
     validate: 'تحقق',
-    currency: 'ج.م'
+    currency: 'ج.م',
+    saveChanges: 'حفظ التغييرات'
   }
 };
 

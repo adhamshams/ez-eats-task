@@ -56,7 +56,7 @@ export default function VerifyScreen() {
             <TouchableOpacity onPress={() => router.back()} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginLeft: 15 }}>
                 <AntDesign name="left" size={20} color="black" />
             </TouchableOpacity>
-            <Text style={{ fontSize: 16, fontFamily: 'SFProDisplay', marginTop: 10, marginHorizontal: 15 }}>We have sent a 4 digit code to your phone number {phoneNumber}</Text>
+            <Text style={{ fontSize: 15, fontFamily: 'SFProDisplay', marginTop: 10, marginHorizontal: 15 }}>We have sent a 4 digit code to your phone number {phoneNumber}</Text>
             <CodeField
                 {...props}
                 value={value}

@@ -1,80 +1,139 @@
-import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
 import { useLanguage } from '../../contexts/languageContext';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function LanguageScreen() {
   const { language, changeLanguage, t } = useLanguage();
+  const [selectedLanguage, setSelectedLanguage] = useState(language);
+
+  const handleSaveChanges = () => {
+    changeLanguage(selectedLanguage);
+  };
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}>{t('languageSelection')}</Text>
-      
-      <View style={styles.currentLanguage}>
-        <Text>{t('currentLanguage')} {language === 'en' ? t('english') : t('arabic')}</Text>
-      </View>
+    <SafeAreaView style={styles.container}>
+      <Text style={[styles.title, { textAlign: selectedLanguage === 'ar' ? 'right' : 'left' }]}>{t('language')}</Text>
       
       <View style={styles.languageOptions}>
         <TouchableOpacity 
-          style={[styles.languageButton, language === 'en' ? styles.selectedLanguage : null]} 
-          onPress={() => changeLanguage('en')}
+          style={styles.languageOption}
+          onPress={() => setSelectedLanguage('ar')}
         >
-          <Text style={styles.buttonText}>{t('english')}</Text>
+          <View style={styles.languageRow}>
+            <Image 
+              source={require('../../assets/images/egypt-flag.png')} 
+              style={styles.flag}
+            />
+            <Text style={styles.languageText}>{t('arabic')}</Text>
+          </View>
+          <View style={[
+            styles.radio, 
+            selectedLanguage === 'ar' && styles.radioSelected
+          ]}>
+            {selectedLanguage === 'ar' && <View style={styles.radioInner} />}
+          </View>
         </TouchableOpacity>
-        
+
         <TouchableOpacity 
-          style={[styles.languageButton, language === 'ar' ? styles.selectedLanguage : null]} 
-          onPress={() => changeLanguage('ar')}
+          style={styles.languageOption}
+          onPress={() => setSelectedLanguage('en')}
         >
-          <Text style={styles.buttonText}>{t('arabic')}</Text>
+          <View style={styles.languageRow}>
+            <Image 
+              source={require('../../assets/images/usa-flag.png')} 
+              style={styles.flag}
+            />
+            <Text style={styles.languageText}>{t('english')}</Text>
+          </View>
+          <View style={[
+            styles.radio, 
+            selectedLanguage === 'en' && styles.radioSelected
+          ]}>
+            {selectedLanguage === 'en' && <View style={styles.radioInner} />}
+          </View>
         </TouchableOpacity>
       </View>
-    </ScrollView>
+
+      <TouchableOpacity 
+        style={styles.saveButton}
+        onPress={handleSaveChanges}
+      >
+        <Text style={styles.saveButtonText}>{t('saveChanges')}</Text>
+      </TouchableOpacity>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    display: 'flex',
+    flexDirection: 'column',
+    backgroundColor: 'white',
+    padding: 15,
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-    marginTop: 40,
-  },
-  currentLanguage: {
-    marginBottom: 20,
-    padding: 10,
-    borderRadius: 8,
-    backgroundColor: '#f0f0f0',
-    alignItems: 'center',
+    fontSize: 25, 
+    fontFamily: 'SFProDisplay',
+    marginBottom: 15,
+    color: '#333',
   },
   languageOptions: {
-    gap: 15,
+    gap: 10,
   },
-  languageButton: {
-    padding: 15,
-    borderRadius: 8,
-    backgroundColor: '#eaeaea',
+  languageOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 15
+  },
+  languageRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  flag: {
+    width: 30,
+    height: 30,
+    borderRadius: 100,
+  },
+  languageText: {
+    fontSize: 18,
+    fontFamily: 'SFProDisplay',
+    color: '#333',
+  },
+  radio: {
+    width: 24,
+    height: 24,
+    borderRadius: 100,
+    borderWidth: 2,
+    borderColor: '#ddd',
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  selectedLanguage: {
-    backgroundColor: '#4a90e2',
+  radioSelected: {
+    borderColor: '#283593',
   },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: '500',
+  radioInner: {
+    width: 12,
+    height: 12,
+    borderRadius: 100,
+    backgroundColor: '#283593',
   },
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
+  saveButton: {
+    backgroundColor: '#283593',
+    padding: 15,
+    borderRadius: 100,
+    alignItems: 'center',
     position: 'absolute',
+    bottom: 15,
+    width: '100%',
+    marginHorizontal: 15,
   },
-  titleContainer: {
-    flexDirection: 'row',
-    gap: 8,
+  saveButtonText: {
+    color: 'white',
+    fontSize: 15,
+    fontFamily: 'SFProDisplay',
   },
 });

@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, SafeAreaView, UIManager, Platform, LayoutAnimation, Modal, TextInput, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, SafeAreaView, UIManager, Platform, LayoutAnimation, Modal, TextInput, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, router } from 'expo-router';
 import orders from '../../assets/data/orders.json';
@@ -42,6 +42,7 @@ interface Order {
 
 const CollapsableView = ({ children, length, title }: { children: JSX.Element, length: number, title: string }) => {
     const [isCollapsed, setIsCollapsed] = useState(false);
+    const { isRTL } = useLanguage();
 
     const toggleCollapse = () => {
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -50,7 +51,7 @@ const CollapsableView = ({ children, length, title }: { children: JSX.Element, l
 
     return (
         <TouchableOpacity onPress={toggleCollapse} style={styles.statusCard}>
-            <View style={styles.itemsHeader}>
+            <View style={[styles.itemsHeader, isRTL && styles.itemsHeaderRTL]}>
                 <Text style={styles.sectionTitle}>{title} ({length})</Text>
                 <Ionicons name={isCollapsed ? "chevron-down" : "chevron-up"} size={24} color="black" />
             </View>
@@ -137,7 +138,7 @@ export default function OrderDetailsScreen() {
                         <Text style={[styles.orderId, isRTL && styles.textRTL]}>{order.id}</Text>
                     </View>
                     <TouchableOpacity style={styles.callButton}>
-                        <Ionicons name="call" size={24} color="white" />
+                        <Ionicons name="call" size={20} color="white" />
                     </TouchableOpacity>
                 </View>
 
@@ -299,43 +300,45 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: '#F3F3F3',
     },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: 16
+        padding: 15
     },
     backButton: {
         flexDirection: 'row',
         alignItems: 'center',
     },
     headerTitle: {
-        fontSize: 15,
-        fontWeight: '500',
-        marginLeft: 8,
+        fontSize: 20,
+        fontFamily: 'SFProDisplay',
+        marginLeft: 5
     },
     refundButton: {
-        backgroundColor: '#e74c3c',
-        paddingVertical: 7,
+        backgroundColor: '#EA374A',
+        height: 35,
+        alignItems: 'center',
+        justifyContent: 'center',
         paddingHorizontal: 24,
-        borderRadius: 50,
+        borderRadius: 100
     },
     refundButtonText: {
         color: 'white',
-        fontWeight: '600',
-        fontSize: 15,
+        fontFamily: 'SFProDisplay',
+        fontSize: 15
     },
     clientCard: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         backgroundColor: 'white',
-        padding: 20,
-        marginHorizontal: 16,
-        marginBottom: 16,
-        borderRadius: 12,
+        padding: 15,
+        marginHorizontal: 15,
+        marginBottom: 15,
+        borderRadius: 10,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.1,
@@ -344,27 +347,28 @@ const styles = StyleSheet.create({
     },
     clientName: {
         fontSize: 20,
-        fontWeight: '600',
+        fontFamily: 'SFProDisplay',
     },
     orderId: {
-        fontSize: 16,
+        fontSize: 15,
         color: 'gray',
-        marginTop: 4,
+        marginTop: 5,
+        fontFamily: 'SFProDisplay',
     },
     callButton: {
-        backgroundColor: '#333',
-        width: 50,
-        height: 50,
-        borderRadius: 25,
+        backgroundColor: '#3D3D43',
+        width: 40,
+        height: 40,
+        borderRadius: 100,
         justifyContent: 'center',
         alignItems: 'center',
     },
     statusCard: {
         backgroundColor: 'white',
-        padding: 20,
-        marginHorizontal: 16,
-        marginBottom: 16,
-        borderRadius: 12,
+        padding: 15,
+        marginHorizontal: 15,
+        marginBottom: 15,
+        borderRadius: 10,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.1,
@@ -373,23 +377,23 @@ const styles = StyleSheet.create({
     },
     sectionTitle: {
         fontSize: 18,
-        fontWeight: '600',
         fontFamily: 'SFProDisplay'
     },
     statusRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginTop: 16,
+        marginTop: 15,
         gap: 10
     },
     statusLabel: {
         flex: 1,
-        fontSize: 16,
-        color: 'gray'
+        fontSize: 15,
+        color: 'gray',
+        fontFamily: 'SFProDisplay'
     },
     statusValue: {
-        fontSize: 16,
-        fontWeight: '600',
+        fontSize: 15,
+        fontFamily: 'SFProDisplay'
     },
     itemsHeader: {
         display: 'flex',
@@ -423,27 +427,29 @@ const styles = StyleSheet.create({
     },
     itemName: {
         fontSize: 15,
-        fontWeight: '600',
         fontFamily: 'SFProDisplay',
         maxWidth: '70%'
     },
     extrasTitle: {
-        fontSize: 14,
+        fontSize: 15,
         color: 'gray',
-        marginTop: 4,
+        marginTop: 5,
+        fontFamily: 'SFProDisplay'
     },
     extraRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginTop: 4,
+        marginTop: 5,
     },
     extraName: {
-        fontSize: 14,
+        fontSize: 15,
         color: 'gray',
+        fontFamily: 'SFProDisplay'
     },
     extraPrice: {
-        fontSize: 14,
-        color: 'gray'
+        fontSize: 15,
+        color: 'gray',
+        fontFamily: 'SFProDisplay'
     },
     currencySuffix: {
         fontSize: 12,
@@ -458,7 +464,7 @@ const styles = StyleSheet.create({
     },
     itemPrice: {
         fontSize: 15,
-        fontWeight: '600'
+        fontFamily: 'SFProDisplay'
     },
     divider: {
         height: 2,
@@ -496,12 +502,13 @@ const styles = StyleSheet.create({
     },
     modalTitle: {
         fontSize: 20,
-        fontWeight: '600',
+        fontFamily: 'SFProDisplay'
     },
     modalSubtitle: {
-        fontSize: 16,
+        fontSize: 15,
         color: 'gray',
         marginBottom: 20,
+        fontFamily: 'SFProDisplay'
     },
     codeContainer: {
         flexDirection: 'row',
@@ -535,16 +542,16 @@ const styles = StyleSheet.create({
     },
     keypadButton: {
         width: '30%',
-        height: 60,
+        height: 50,
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: 8,
+        borderRadius: 10,
         marginVertical: 5,
         backgroundColor: '#f5f5f5',
     },
     keypadButtonText: {
         fontSize: 24,
-        fontWeight: '500',
+        fontFamily: 'SFProDisplay',
     },
     submitButton: {
         backgroundColor: '#333',
@@ -587,6 +594,12 @@ const styles = StyleSheet.create({
         flexDirection: 'row-reverse',
     },
     modalHeaderRTL: {
+        flexDirection: 'row-reverse',
+    },
+    statusCardRTL: {
+        flexDirection: 'row-reverse',
+    },
+    itemsHeaderRTL: {
         flexDirection: 'row-reverse',
     }
 });

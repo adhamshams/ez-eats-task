@@ -1,6 +1,6 @@
 import { StyleSheet, View, Text, SafeAreaView, TouchableOpacity, FlatList } from 'react-native';
 import { TabView, TabBar, NavigationState, SceneRendererProps } from "react-native-tab-view";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import orders from '../../assets/data/orders.json';
 import { router } from 'expo-router';
@@ -45,10 +45,14 @@ interface Route {
 export default function HomeScreen() {
   const { t, isRTL } = useLanguage();
   const [index, setIndex] = useState(0);
-  const [routes] = useState<Route[]>([
-    { key: 'home', title: t('home') },
-    { key: 'ready', title: t('ready') },
-  ]);
+  const [routes, setRoutes] = useState<Route[]>([]);
+
+  useEffect(() => {
+    setRoutes([
+      { key: 'home', title: t('home') },
+      { key: 'ready', title: t('ready') },
+    ]);
+  }, [isRTL]);
 
   const renderScene = ({ route }: { route: Route }) => {
     switch (route.key) {
@@ -182,25 +186,25 @@ function OrderCard({ order }: { order: Order }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
-    backgroundColor: '#f5f5f5',
+    padding: 15,
+    backgroundColor: '#F3F3F3',
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
+    paddingHorizontal: 15,
     paddingVertical: 12
   },
   logoContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 15
+    gap: 10
   },
   logo: {
     width: 32,
     height: 32,
-    borderRadius: 16,
+    borderRadius: 100,
     backgroundColor: '#E74C3C',
     justifyContent: 'center',
     alignItems: 'center'
@@ -214,6 +218,7 @@ const styles = StyleSheet.create({
   },
   restaurantHours: {
     fontSize: 12,
+    fontFamily: 'SFProDisplay',
     color: 'gray',
   },
   brandLogo: {
@@ -227,8 +232,8 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: 'white',
     borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
+    padding: 15,
+    marginBottom: 15,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
@@ -238,37 +243,39 @@ const styles = StyleSheet.create({
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 12,
+    marginBottom: 10,
   },
   waiterName: {
-    fontSize: 16,
-    fontWeight: '500',
+    fontSize: 15,
+    fontFamily: 'SFProDisplay'
   },
   orderId: {
-    fontSize: 16,
-    fontWeight: '500',
+    fontSize: 15,
+    fontFamily: 'SFProDisplay'
   },
   cardTimeRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 16,
+    marginBottom: 15,
   },
   timeContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: 5
   },
   timeText: {
-    fontSize: 14,
+    fontSize: 15,
+    fontFamily: 'SFProDisplay',
     color: 'gray',
   },
   typeContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: 5,
   },
   typeText: {
-    fontSize: 14,
+    fontSize: 15,
+    fontFamily: 'SFProDisplay',
   },
   cardActions: {
     flexDirection: 'row',
@@ -280,9 +287,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 6,
-    flex: 1
+    paddingHorizontal: 15,
+    borderRadius: 100,
+    flex: 1,
+    gap: 5
   },
   sendSmsButton: {
     backgroundColor: '#283593',
@@ -294,11 +302,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#f1f1f1',
   },
   buttonText: {
-    marginLeft: 6,
-    fontSize: 14,
+    fontSize: 15,
+    fontFamily: 'SFProDisplay',
     color: 'white',
   },
-  // RTL Styles
   headerRTL: {
     flexDirection: 'row-reverse',
   },
