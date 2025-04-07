@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, SafeAreaView, UIManager, Platform, LayoutAnimation } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, SafeAreaView, UIManager, Platform, LayoutAnimation, Modal, TextInput, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, router } from 'expo-router';
 import orders from '../../assets/data/orders.json';
@@ -63,6 +63,9 @@ const CollapsableView = ({ children, length }: { children: JSX.Element, length: 
 
 export default function OrderDetailsScreen() {
     const { id } = useLocalSearchParams();
+    const [modalVisible, setModalVisible] = useState(false);
+    const [managerCode, setManagerCode] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     // Find the order with the matching ID
     const order = orders.find(o => o.id === id) as Order | undefined;
@@ -74,6 +77,43 @@ export default function OrderDetailsScreen() {
             </View>
         );
     }
+    
+    const handleRefundPress = () => {
+        setModalVisible(true);
+    };
+    
+    const handleCodeEntry = (digit: string) => {
+        if (managerCode.length < 4) {
+            setManagerCode(prev => prev + digit);
+        }
+    };
+    
+    const clearCode = () => {
+        setManagerCode('');
+    };
+    
+    const deleteLastDigit = () => {
+        setManagerCode(prev => prev.slice(0, -1));
+    };
+    
+    const validateCode = () => {
+        setIsLoading(true);
+        
+        // Simulate API call with timeout
+        setTimeout(() => {
+            setIsLoading(false);
+            
+            // For demo purposes, let's say the correct code is "1234"
+            if (managerCode === "1234") {
+                setModalVisible(false);
+                setManagerCode('');
+                Alert.alert("Success", "Refund has been approved and processed.");
+            } else {
+                Alert.alert("Error", "Invalid manager code. Please try again.");
+                setManagerCode('');
+            }
+        }, 800);
+    };
 
     return (
         <SafeAreaView style={styles.safeArea}>
@@ -84,7 +124,7 @@ export default function OrderDetailsScreen() {
                         <Ionicons name="chevron-back" size={20} color="black" />
                         <Text style={styles.headerTitle}>Order Details</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.refundButton}>
+                    <TouchableOpacity style={styles.refundButton} onPress={handleRefundPress}>
                         <Text style={styles.refundButtonText}>Refund</Text>
                     </TouchableOpacity>
                 </View>
@@ -159,6 +199,89 @@ export default function OrderDetailsScreen() {
                     </View>
                 </CollapsableView>
             </ScrollView>
+            
+            {/* Manager Code Modal */}
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => setModalVisible(false)}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContainer}>
+                        <View style={styles.modalHeader}>
+                            <Text style={styles.modalTitle}>Manager Authorization</Text>
+                            <TouchableOpacity 
+                                onPress={() => {
+                                    setModalVisible(false);
+                                    setManagerCode('');
+                                }}
+                            >
+                                <Ionicons name="close" size={24} color="black" />
+                            </TouchableOpacity>
+                        </View>
+                        
+                        <View style={styles.codeContainer}>
+                            {[0, 1, 2, 3].map(i => (
+                                <View 
+                                    key={i} 
+                                    style={[
+                                        styles.codeDigit, 
+                                        managerCode.length > i && styles.codeDigitFilled
+                                    ]}
+                                >
+                                    {managerCode.length > i && (
+                                        <Text style={styles.codeDigitText}>•</Text>
+                                    )}
+                                </View>
+                            ))}
+                        </View>
+                        
+                        <View style={styles.keypadContainer}>
+                            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(num => (
+                                <TouchableOpacity 
+                                    key={num}
+                                    style={styles.keypadButton} 
+                                    onPress={() => handleCodeEntry(num.toString())}
+                                >
+                                    <Text style={styles.keypadButtonText}>{num}</Text>
+                                </TouchableOpacity>
+                            ))}
+                            <TouchableOpacity 
+                                style={styles.keypadButton} 
+                                onPress={clearCode}
+                            >
+                                <Text style={styles.keypadButtonText}>C</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity 
+                                style={styles.keypadButton} 
+                                onPress={() => handleCodeEntry('0')}
+                            >
+                                <Text style={styles.keypadButtonText}>0</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity 
+                                style={styles.keypadButton} 
+                                onPress={deleteLastDigit}
+                            >
+                                <Ionicons name="backspace-outline" size={24} color="black" />
+                            </TouchableOpacity>
+                        </View>
+                        
+                        <TouchableOpacity 
+                            style={[
+                                styles.submitButton,
+                                (managerCode.length !== 4 || isLoading) && styles.submitButtonDisabled
+                            ]}
+                            onPress={validateCode}
+                            disabled={managerCode.length !== 4 || isLoading}
+                        >
+                            <Text style={styles.submitButtonText}>
+                                {isLoading ? 'Verifying...' : 'Submit'}
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
         </SafeAreaView>
     );
 }
@@ -335,5 +458,100 @@ const styles = StyleSheet.create({
         backgroundColor: '#f0f0f0',
         width: '100%',
         marginVertical: 16
-    }
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalContainer: {
+        width: '95%',
+        backgroundColor: 'white',
+        borderRadius: 12,
+        padding: 15,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5
+    },
+    modalHeader: {
+        width: '100%',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    modalTitle: {
+        fontSize: 20,
+        fontWeight: '600',
+    },
+    modalSubtitle: {
+        fontSize: 16,
+        color: 'gray',
+        marginBottom: 20,
+    },
+    codeContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        marginBottom: 20,
+    },
+    codeDigit: {
+        width: 50,
+        height: 50,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        marginHorizontal: 5,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    codeDigitFilled: {
+        borderColor: '#333',
+        backgroundColor: '#f5f5f5',
+    },
+    codeDigitText: {
+        fontSize: 24,
+        fontWeight: 'bold',
+    },
+    keypadContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+        width: '100%',
+        marginBottom: 20,
+    },
+    keypadButton: {
+        width: '30%',
+        height: 60,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 8,
+        marginVertical: 5,
+        backgroundColor: '#f5f5f5',
+    },
+    keypadButtonText: {
+        fontSize: 24,
+        fontWeight: '500',
+    },
+    submitButton: {
+        backgroundColor: '#333',
+        paddingVertical: 12,
+        paddingHorizontal: 40,
+        borderRadius: 50,
+        marginBottom: 20,
+    },
+    submitButtonDisabled: {
+        backgroundColor: '#ccc',
+    },
+    submitButtonText: {
+        color: 'white',
+        fontSize: 16,
+        fontWeight: '600',
+    },
 });
