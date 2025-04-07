@@ -1,6 +1,6 @@
 import { BottomSheetModal, BottomSheetModalProvider, BottomSheetView } from '@gorhom/bottom-sheet';
 import { Stack } from 'expo-router';
-import React, { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaView, StyleSheet, View, Image, Text } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -26,17 +26,12 @@ export default function TabLayout() {
                             <Image source={require('../../assets/images/logo.png')} style={{ width: 90, height: 90 }} />
                             <Text style={{ fontSize: 16, fontFamily: 'SFProDisplay', color: '#fff', textAlign: 'center' }}>Login to get started with a seamless restaurant management experience</Text>
                         </View>
-                        <BottomSheetModal ref={bottomSheetModalRef} snapPoints={['70%']} enableDynamicSizing={false} enablePanDownToClose={false} backgroundStyle={{ backgroundColor: '#fff' }} handleIndicatorStyle={{ display: 'none' }} keyboardBehavior="interactive" keyboardBlurBehavior="restore" >
-                            <BottomSheetView style={styles.contentContainer}>
-                                <Text>Hello</Text>
-                            </BottomSheetView>
-                        </BottomSheetModal>
                     </SafeAreaView>
                     <BottomSheetModal ref={bottomSheetModalRef} snapPoints={['70%']} enableDynamicSizing={false} enablePanDownToClose={false} backgroundStyle={{ backgroundColor: '#fff' }} handleIndicatorStyle={{ display: 'none' }} keyboardBehavior="interactive" keyboardBlurBehavior="restore" >
                         <BottomSheetView style={styles.contentContainer}>
                             <Stack>
-                                <Stack.Screen name="index" options={{ headerShown: false }} />
-                                <Stack.Screen name="verify" options={{ headerShown: false }} />
+                                <Stack.Screen name="phone-number" options={{ headerShown: false }} />
+                                <Stack.Screen name="otp" options={{ headerShown: false }} />
                             </Stack>
                         </BottomSheetView>
                     </BottomSheetModal>

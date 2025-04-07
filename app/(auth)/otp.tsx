@@ -27,7 +27,6 @@ export default function VerifyScreen() {
         setTimeout(() => {
             setLoading(false);
             signIn();
-            Keyboard.dismiss();
             router.replace('/(tabs)');
         }, 1000);
     };

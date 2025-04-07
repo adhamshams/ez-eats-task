@@ -1,0 +1,123 @@
+[
+  {
+    "id": "TX-1231",
+    "status": "ready",
+    "type": "pickup",
+    "price": 2000,
+    "items": [
+      {
+        "name": "Cheesy Buffalo Burger",
+        "quantity": 2,
+        "price": 650,
+        "extras": [
+          {
+            "name": "Extra Cheese",
+            "price": 45
+          },
+          {
+            "name": "Extra Mayo",
+            "price": 15
+          },
+          {
+            "name": "Extra Pickles",
+            "price": 25
+          }
+        ],
+        "notes": "Please make sure to remove onions from one of the sandwiches"
+      },
+      {
+        "name": "Buffalo Signature Fries",
+        "quantity": 4,
+        "price": 250,
+        "extras": []
+      },
+      {
+        "name": "Coca-Cola",
+        "quantity": 3,
+        "price": 100,
+        "notes": "Please make one of the colas diet"
+      }
+    ],
+    "customer": {
+      "name": "Client Name",
+      "phone": "+1-555-123-4567",
+      "email": "client.name@example.com"
+    },
+    "orderTime": "02:00 PM"
+  },
+  {
+    "id": "S42",
+    "status": "completed",
+    "type": "delivery",
+    "price": 42.75,
+    "items": [
+      {
+        "name": "Margherita Pizza",
+        "quantity": 1,
+        "price": 18.99
+      },
+      {
+        "name": "Caesar Salad",
+        "quantity": 1,
+        "price": 8.99
+      },
+      {
+        "name": "Garlic Bread",
+        "quantity": 1,
+        "price": 5.99
+      },
+      {
+        "name": "Tiramisu",
+        "quantity": 1,
+        "price": 8.99
+      }
+    ],
+    "customer": {
+      "name": "Sarah Johnson",
+      "phone": "+1-555-987-6543",
+      "email": "sarah.j@example.com",
+      "address": "123 Main St, Apt 4B, New York, NY 10001"
+    },
+    "orderTime": "19:24 PM"
+  },
+  {
+    "id": "TX-66",
+    "status": "completed",
+    "type": "dine-in",
+    "price": 56.25,
+    "items": [
+      {
+        "name": "Steak",
+        "quantity": 1,
+        "price": 29.99
+      },
+      {
+        "name": "Mashed Potatoes",
+        "quantity": 1,
+        "price": 5.99
+      },
+      {
+        "name": "House Salad",
+        "quantity": 1,
+        "price": 6.99
+      },
+      {
+        "name": "Red Wine",
+        "quantity": 1,
+        "price": 9.99
+      },
+      {
+        "name": "Cheesecake",
+        "quantity": 1,
+        "price": 7.99
+      }
+    ],
+    "customer": {
+      "name": "Michael Chen",
+      "phone": "+1-555-456-7890",
+      "email": "m.chen@example.com"
+    },
+    "table": "Table 7",
+    "orderTime": "19:24 PM"
+  }
+] 

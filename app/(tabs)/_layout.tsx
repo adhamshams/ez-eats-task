@@ -1,48 +1,35 @@
 import { useSession } from '@/contexts/ctx';
+import { Ionicons } from '@expo/vector-icons';
 import { Redirect, Tabs } from 'expo-router';
-import React from 'react';
-import { Platform, Text } from 'react-native';
+import { Text } from 'react-native';
 
 
 export default function TabLayout() {
 
-  // const { session, isLoading } = useSession();
+  const { session, isLoading } = useSession();
 
-  // if (isLoading) {
-  //   return <Text>Loading...</Text>;
-  // }
+  if (isLoading) {
+    return <Text>Loading...</Text>;
+  }
 
-  // if (!session) {
-  //   return <Redirect href="/(auth)" />;
-  // }
+  if (!session) {
+    return <Redirect href="/(auth)/phone-number" />;
+  }
 
   return (
-    <Tabs
-      screenOptions={{
-        //tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        //tabBarButton: HapticTab,
-        //tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: 'absolute',
-          },
-          default: {},
-        }),
-      }}>
+    <Tabs screenOptions={{ headerShown: false}}>
       <Tabs.Screen
         name="index"
         options={{
           title: 'Home',
-          //tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          tabBarIcon: ({ color }) => <Ionicons name="home" size={24} color={color} />
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="language"
         options={{
-          title: 'Explore',
-          //tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: 'Language',
+          tabBarIcon: ({ color }) => <Ionicons name="language" size={24} color={color} />
         }}
       />
     </Tabs>
