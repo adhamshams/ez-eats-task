@@ -13,7 +13,7 @@ export default function LanguageScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={[styles.title, { textAlign: selectedLanguage === 'ar' ? 'right' : 'left' }]}>{t('language')}</Text>
+      <Text style={[styles.title, { textAlign: language === 'ar' ? 'right' : 'left' }]}>{t('language')}</Text>
       
       <View style={styles.languageOptions}>
         <TouchableOpacity 
